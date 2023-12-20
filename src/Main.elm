@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
 
 
 todos =
@@ -13,8 +14,15 @@ todos =
 
 
 todoView todo =
-    li [] [ text todo.title ]
+    li []
+        [ text todo.title
+        , button [ class "button--delete-todo" ] [ text "X" ]
+        ]
+
+
+todoListView =
+    ul [] (List.map todoView todos)
 
 
 main =
-    ul [] (List.map todoView todos)
+    main_ [] [ todoListView ]
