@@ -60,3 +60,23 @@ button.button--delete-todo {
   background-color: inherit;
   color: hsl(0 80% 50% / 0.6);
 }
+
+.form {
+  min-width: 340px;
+}
+
+.form > * + * {
+  display: block;
+  margin-top: 1.5rem;
+}
+
+input {
+  width: 100%;
+  background-color: hsl(0 0% 15%);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.3rem;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}

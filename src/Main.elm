@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Attributes exposing (attribute, class, placeholder, type_)
 
 
 todos =
@@ -13,7 +13,7 @@ todos =
     ]
 
 
-todoView todo =
+todoItemView todo =
     li []
         [ text todo.title
         , button [ class "button--delete-todo" ] [ text "X" ]
@@ -21,8 +21,13 @@ todoView todo =
 
 
 todoListView =
-    ul [] (List.map todoView todos)
+    ul [] (List.map todoItemView todos)
+
+
+todoFormView =
+    form []
+        [ input [ type_ "text", placeholder "Create a new todo...", attribute "aria-label" "create a new todo" ] [] ]
 
 
 main =
-    main_ [] [ todoListView ]
+    main_ [] [ todoFormView, todoListView ]
