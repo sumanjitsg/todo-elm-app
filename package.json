@@ -2,7 +2,8 @@
   "name": "todo-elm-app",
   "private": true,
   "scripts": {
-    "postinstall": "elm-tooling install"
+    "postinstall": "elm-tooling install",
+    "build": "npx elm make --output dist/elm.js src/Main.elm"
   },
   "devDependencies": {
     "elm-tooling": "^1.15.0"

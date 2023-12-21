@@ -4,7 +4,5 @@ elm-stuff
 # elm-repl generated files
 repl-temp-*
 
-# elm make generated files
-elm.js
-
+dist
 node_modules
