@@ -1,0 +1,10 @@
+{
+  "name": "todo-elm-app",
+  "private": true,
+  "scripts": {
+    "postinstall": "elm-tooling install"
+  },
+  "devDependencies": {
+    "elm-tooling": "^1.15.0"
+  }
+}
