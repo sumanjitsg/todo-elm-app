@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (attribute, class, placeholder, type_)
+import Html.Events exposing (onClick)
 
 
 
@@ -25,7 +26,11 @@ initialModel =
 
 
 update msg model =
-    model
+    if msg.description == "deleteTodo" then
+        { model | todos = List.filter (\item -> item.id /= msg.itemId) model.todos }
+
+    else
+        model
 
 
 
@@ -35,7 +40,7 @@ update msg model =
 todoItemView item =
     li []
         [ text item.title
-        , button [ class "button--delete-todo" ] [ text "X" ]
+        , button [ class "button--delete-todo", onClick { itemId = item.id, description = "deleteTodo" } ] [ text "X" ]
         ]
 
 
