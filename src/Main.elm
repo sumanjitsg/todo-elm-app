@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (..)
-import Html.Attributes exposing (attribute, class, placeholder, title, type_)
+import Html.Attributes exposing (attribute, class, placeholder, type_)
 import Html.Events exposing (onClick)
 
 
