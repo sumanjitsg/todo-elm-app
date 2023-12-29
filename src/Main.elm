@@ -7,55 +7,92 @@ import Html.Events exposing (onClick)
 
 
 
+-- MAIN
+
+
+main =
+    Browser.sandbox { init = init, view = view, update = update }
+
+
+
 -- MODEL
 
 
-initialModel =
-    { todos =
+type alias Model =
+    { todos : List Todo }
+
+
+type alias Todo =
+    { id : Int, title : String, completed : Bool }
+
+
+init : Model
+init =
+    Model
+        -- List of todos
         [ { id = 1, title = "Pick up groceries", completed = True }
         , { id = 2, title = "Jog around the park 3x", completed = False }
         , { id = 3, title = "10 minutes meditation", completed = False }
         , { id = 4, title = "Read for 30 minutes", completed = False }
         , { id = 5, title = "Complete this todo app", completed = False }
         ]
-    }
 
 
 
 -- UPDATE
 
 
-update msg model =
-    if msg.description == "deleteTodo" then
-        { model | todos = List.filter (\item -> item.id /= msg.itemId) model.todos }
+type Msg
+    = DeleteTodo Int
 
-    else
-        model
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        DeleteTodo deleteId ->
+            { model
+                | todos =
+                    List.filter (\item -> item.id /= deleteId) model.todos
+            }
 
 
 
 -- VIEW
 
 
-todoItemView item =
-    li []
-        [ text item.title
-        , button [ class "button--delete-todo", onClick { itemId = item.id, description = "deleteTodo" } ] [ text "X" ]
+view : Model -> Html Msg
+view model =
+    main_ []
+        [ viewTodoForm
+        , viewTodoList model.todos
         ]
 
 
-todoListView items =
-    ul [] (List.map todoItemView items)
-
-
-todoFormView =
+viewTodoForm : Html Msg
+viewTodoForm =
     form []
-        [ input [ type_ "text", placeholder "Create a new todo...", attribute "aria-label" "create a new todo" ] [] ]
+        [ input
+            [ type_ "text"
+            , placeholder "Create a new todo..."
+            , attribute "aria-label" "create a new todo"
+            ]
+            []
+        ]
 
 
-view model =
-    main_ [] [ todoFormView, todoListView model.todos ]
+viewTodoList : List Todo -> Html Msg
+viewTodoList items =
+    ul []
+        (List.map viewTodoItem items)
 
 
-main =
-    Browser.sandbox { init = initialModel, view = view, update = update }
+viewTodoItem : Todo -> Html Msg
+viewTodoItem item =
+    li []
+        [ text item.title
+        , button
+            [ class "button--delete-todo"
+            , onClick (DeleteTodo item.id)
+            ]
+            [ text "X" ]
+        ]
