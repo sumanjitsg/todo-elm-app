@@ -11,7 +11,7 @@ import Html.Events exposing (onClick)
 
 
 main =
-    Browser.sandbox { init = initialModel, view = view, update = update }
+    Browser.sandbox { init = init, view = view, update = update }
 
 
 
@@ -26,10 +26,8 @@ type alias Todo =
     { id : Int, title : String, completed : Bool }
 
 
-itialModel : Model
-
-
-initialModel =
+init : Model
+init =
     Model
         -- List of todos
         [ { id = 1, title = "Pick up groceries", completed = True }
