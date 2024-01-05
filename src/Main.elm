@@ -2,8 +2,8 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (..)
-import Html.Attributes exposing (attribute, class, placeholder, type_)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (attribute, class, placeholder, type_, value)
+import Html.Events exposing (onClick, onInput, onSubmit)
 import Http
 import Json.Decode as Decode exposing (Decoder)
 
@@ -24,11 +24,20 @@ main =
 type Model
     = Failure
     | Loading
-    | Success (List Todo)
+    | Success State
+
+
+type alias State =
+    { input : String
+    , todos : List Todo
+    }
 
 
 type alias Todo =
-    { id : Int, title : String, completed : Bool }
+    { id : Int
+    , title : String
+    , completed : Bool
+    }
 
 
 init : () -> ( Model, Cmd Msg )
@@ -42,7 +51,9 @@ init _ =
 
 type Msg
     = DeleteTodo Int
+    | CreateTodo String
     | GotTodos (Result Http.Error (List Todo))
+    | ChangeInput String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -50,20 +61,60 @@ update msg model =
     case msg of
         DeleteTodo deleteId ->
             case model of
-                Success todos ->
-                    ( Success (List.filter (\item -> item.id /= deleteId) todos), Cmd.none )
+                Success state ->
+                    -- filter todos to remove the one with the given id
+                    ( Success
+                        { state
+                            | todos =
+                                List.filter
+                                    (\item -> item.id /= deleteId)
+                                    state.todos
+                        }
+                    , Cmd.none
+                    )
 
                 _ ->
-                    -- TODO: Add failure and loading cases
+                    ( model, Cmd.none )
+
+        CreateTodo title ->
+            case model of
+                Success state ->
+                    -- add the new todo to the beginning of the list
+                    ( Success
+                        { input = ""
+                        , todos =
+                            { id = List.length state.todos + 1
+                            , title = title
+                            , completed = False
+                            }
+                                :: state.todos
+                        }
+                    , Cmd.none
+                    )
+
+                _ ->
                     ( model, Cmd.none )
 
         GotTodos result ->
             case result of
                 Ok todos ->
-                    ( Success todos, Cmd.none )
+                    case model of
+                        Loading ->
+                            ( Success { input = "", todos = todos }, Cmd.none )
+
+                        _ ->
+                            ( model, Cmd.none )
 
                 Err _ ->
                     ( Failure, Cmd.none )
+
+        ChangeInput value ->
+            case model of
+                Success state ->
+                    ( Success { state | input = value }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 
@@ -88,20 +139,22 @@ view model =
         Loading ->
             div [] [ text "Loading todos..." ]
 
-        Success todos ->
+        Success state ->
             main_ []
-                [ viewTodoForm
-                , viewTodoList todos
+                [ viewTodoForm state.input
+                , viewTodoList state.todos
                 ]
 
 
-viewTodoForm : Html Msg
-viewTodoForm =
-    form []
+viewTodoForm : String -> Html Msg
+viewTodoForm inputValue =
+    form [ onSubmit (CreateTodo inputValue) ]
         [ input
             [ type_ "text"
+            , value inputValue
             , placeholder "Create a new todo..."
             , attribute "aria-label" "create a new todo"
+            , onInput ChangeInput
             ]
             []
         ]
